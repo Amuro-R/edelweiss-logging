@@ -8,7 +8,7 @@ import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.part.StringPart;
 import org.edelweiss.logging.el.LogEvaluationContext;
 import org.edelweiss.logging.el.LogOperationExpressionEvaluator;
-import org.edelweiss.logging.el.LogParseFunctionFactory;
+import org.edelweiss.logging.el.LogParseFunctionRegistry;
 import org.edelweiss.logging.properties.LogProperties;
 import org.edelweiss.logging.pojo.po.LogPO;
 import org.edelweiss.logging.pojo.eo.OperationTypeEnum;
@@ -35,7 +35,7 @@ public class LogAspect {
     private final LogOperationExpressionEvaluator expressionEvaluator = new LogOperationExpressionEvaluator();
 
     @Autowired
-    private LogParseFunctionFactory logParseFunctionFactory;
+    private LogParseFunctionRegistry logParseFunctionRegistry;
 
     @Autowired
     private LogExecutor logExecutor;
@@ -121,13 +121,13 @@ public class LogAspect {
 
         LogEvaluationContext beforeEvaluationContext = new LogEvaluationContext(null, method, args, nameDiscoverer);
 
-        LogOperationTemplateHandler successHandler = this.createHandlerAndParseTemplate(successTemplate, logParseFunctionFactory,
+        LogOperationTemplateHandler successHandler = this.createHandlerAndParseTemplate(successTemplate, logParseFunctionRegistry,
                 expressionEvaluator, methodKey, beforeEvaluationContext, true);
 
         LogOperationTemplateHandler failHandler = null;
         if (!failTemplate.trim().isEmpty()) {
             methodExecuteResult.setHasFailTemplate(true);
-            failHandler = this.createHandlerAndParseTemplate(failTemplate, logParseFunctionFactory, expressionEvaluator,
+            failHandler = this.createHandlerAndParseTemplate(failTemplate, logParseFunctionRegistry, expressionEvaluator,
                     methodKey, beforeEvaluationContext, true);
         }
 
@@ -167,11 +167,11 @@ public class LogAspect {
         return template;
     }
 
-    private LogOperationTemplateHandler createHandlerAndParseTemplate(String template, LogParseFunctionFactory logParseFunctionFactory,
+    private LogOperationTemplateHandler createHandlerAndParseTemplate(String template, LogParseFunctionRegistry logParseFunctionRegistry,
                                                                       LogOperationExpressionEvaluator expressionEvaluator,
                                                                       AnnotatedElementKey methodKey, LogEvaluationContext evaluationContext,
                                                                       boolean before) {
-        LogOperationTemplateHandler templateHandler = new LogOperationTemplateHandler(logParseFunctionFactory, template, expressionEvaluator);
+        LogOperationTemplateHandler templateHandler = new LogOperationTemplateHandler(logParseFunctionRegistry, template, expressionEvaluator);
         templateHandler.extractStringPart();
         templateHandler.methodValueInject(methodKey, evaluationContext, before);
         return templateHandler;

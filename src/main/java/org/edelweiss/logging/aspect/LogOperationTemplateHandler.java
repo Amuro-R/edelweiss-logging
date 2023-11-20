@@ -7,7 +7,7 @@ import org.edelweiss.logging.aspect.part.StringPart;
 import org.edelweiss.logging.el.ILogParseFunction;
 import org.edelweiss.logging.el.LogEvaluationContext;
 import org.edelweiss.logging.el.LogOperationExpressionEvaluator;
-import org.edelweiss.logging.el.LogParseFunctionFactory;
+import org.edelweiss.logging.el.LogParseFunctionRegistry;
 import org.springframework.context.expression.AnnotatedElementKey;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class LogOperationTemplateHandler {
 
-    private final LogParseFunctionFactory logParseFunctionFactory;
+    private final LogParseFunctionRegistry logParseFunctionRegistry;
 
     private final LogOperationExpressionEvaluator expressionEvaluator;
 
@@ -25,9 +25,9 @@ public class LogOperationTemplateHandler {
 
     private final PartInfo partInfo;
 
-    public LogOperationTemplateHandler(LogParseFunctionFactory logParseFunctionFactory, String template,
+    public LogOperationTemplateHandler(LogParseFunctionRegistry logParseFunctionRegistry, String template,
                                        LogOperationExpressionEvaluator expressionEvaluator) {
-        this.logParseFunctionFactory = logParseFunctionFactory;
+        this.logParseFunctionRegistry = logParseFunctionRegistry;
         this.template = template;
         this.partList = new ArrayList<>();
         this.partInfo = new PartInfo();
@@ -46,7 +46,6 @@ public class LogOperationTemplateHandler {
             String part = this.getExtractedPartFromTemplate(template, partInfo);
 
             if (partInfo.getPartType().equals(PartType.SPEL_STRING)) {
-                // 完整支持el表达式，不再加上前缀
                 StringPart stringPart = new StringPart("#" + part, partInfo.getPartType(), partInfo.isBefore());
                 partList.add(stringPart);
             } else {
@@ -178,7 +177,7 @@ public class LogOperationTemplateHandler {
                 idx = idx + 1;
             }
             if (partBefore == before) {
-                ILogParseFunction logParseFunction = logParseFunctionFactory.getLogParseFunction(part);
+                ILogParseFunction logParseFunction = logParseFunctionRegistry.get(part);
                 Object functionValue = logParseFunction.parse(subArgs);
                 stringPart.setValue(functionValue);
             }
