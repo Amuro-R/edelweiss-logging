@@ -6,6 +6,10 @@ import org.edelweiss.logging.registry.AbstractRegistry;
 
 import java.util.List;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Slf4j
 @NoArgsConstructor
 public class LogParseFunctionRegistry extends AbstractRegistry<String, ILogParseFunction> {

@@ -5,6 +5,10 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Data
 public class StringPart {
 

@@ -4,9 +4,9 @@ import org.springframework.aop.framework.AopContext;
 import org.springframework.aop.support.AopUtils;
 
 /**
- * @author jingyun
- * @date 2022-10-26
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class AopUtil {
 
     @SuppressWarnings("unchecked")

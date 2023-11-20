@@ -35,6 +35,10 @@ import java.util.stream.Collectors;
 
 import static org.edelweiss.logging.properties.LogProperties.*;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Slf4j
 @Aspect
 public class LogAspect {

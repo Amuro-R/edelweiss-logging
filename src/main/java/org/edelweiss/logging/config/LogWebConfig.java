@@ -6,6 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Configuration
 public class LogWebConfig implements WebMvcConfigurer {
 

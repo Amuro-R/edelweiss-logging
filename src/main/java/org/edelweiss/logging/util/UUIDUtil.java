@@ -8,11 +8,9 @@ import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import java.util.UUID;
 
 /**
- * uuid version 1
- *
- * @author jingyun
- * @date 2022-03-02
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class UUIDUtil {
 
     private static final TimeBasedGenerator timeBasedGenerator;

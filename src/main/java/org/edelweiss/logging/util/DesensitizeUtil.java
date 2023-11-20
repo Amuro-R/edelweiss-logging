@@ -3,9 +3,9 @@ package org.edelweiss.logging.util;
 import org.springframework.util.StringUtils;
 
 /**
- * @author jingyun
- * @date 2022-09-08
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class DesensitizeUtil {
 
     public static String phoneDesensitize(String phone, char symbol) {

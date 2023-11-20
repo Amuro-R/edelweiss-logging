@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author jingyun
- * @date 2022-06-16
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class RecursionLoopChecker<T> {
 
     private final Set<T> set;

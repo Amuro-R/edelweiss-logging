@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author jingyun
- * @date 2022-09-14
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class CollectionUtil {
 
 

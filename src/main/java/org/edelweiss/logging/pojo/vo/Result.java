@@ -3,9 +3,9 @@ package org.edelweiss.logging.pojo.vo;
 import java.io.Serializable;
 
 /**
- * @author jingyun
- * @date 2022-05-23
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public interface Result extends Serializable {
     boolean success();
 

@@ -10,9 +10,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * @author jingyun
- * @date 2022-09-01
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class DateUtil {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER;

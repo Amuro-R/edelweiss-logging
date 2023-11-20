@@ -2,6 +2,10 @@ package org.edelweiss.logging.aspect.part;
 
 import lombok.Data;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Data
 public class PartIndexInfo {
     /**

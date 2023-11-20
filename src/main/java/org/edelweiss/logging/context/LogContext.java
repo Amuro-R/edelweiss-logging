@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class LogContext {
 
     private static final ThreadLocal<Deque<Map<String, Object>>> LOG_ATTRIBUTE_HOLDER = new ThreadLocal<>();

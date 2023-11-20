@@ -8,6 +8,10 @@ import org.springframework.expression.Expression;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class LogExpressionEvaluator extends CachedExpressionEvaluator {
 
     private final ConcurrentMap<ExpressionKey, Expression> expressionCache = new ConcurrentHashMap<>();
@@ -16,7 +20,7 @@ public class LogExpressionEvaluator extends CachedExpressionEvaluator {
         return super.getExpression(this.expressionCache, elementKey, expression).getValue(evalContext);
     }
 
-    public Object parseValue(AnnotatedElementKey elementKey, String expression, EvaluationContext evalContext){
+    public Object parseValue(AnnotatedElementKey elementKey, String expression, EvaluationContext evalContext) {
         return super.getParser().parseRaw(expression).getValue(evalContext);
     }
 

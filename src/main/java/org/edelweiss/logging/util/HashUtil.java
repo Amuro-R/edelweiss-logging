@@ -6,9 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
- * @author jingyun
- * @date 2022-08-29
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class HashUtil {
     private static final BCryptPasswordEncoder ENCODER;
 

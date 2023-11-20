@@ -18,17 +18,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * AES 加密工具类
- *
- * @author jingyun
- * @date 2022-08-21
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Slf4j
 @Getter
 public class AesUtil {
     private final AesContext aesContext;
 
-    private AesUtil(AesContext aesContext) {this.aesContext = aesContext;}
+    private AesUtil(AesContext aesContext) {
+        this.aesContext = aesContext;
+    }
 
     public String encrypt(String plainText) {
         try {

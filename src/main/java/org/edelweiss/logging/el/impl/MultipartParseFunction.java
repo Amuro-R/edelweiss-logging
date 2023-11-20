@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class MultipartParseFunction implements ILogParseFunction {
 
     private static ObjectMapper objectMapper = new ObjectMapper();

@@ -6,6 +6,10 @@ import org.edelweiss.logging.util.DateUtil;
 
 import java.util.Date;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class DateParseFunction implements ILogParseFunction {
     @Override
     public String functionName() {

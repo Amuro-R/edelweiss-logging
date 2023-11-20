@@ -1,5 +1,9 @@
 package org.edelweiss.logging.aspect;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class LogConstant {
     public static final String OPERATOR = "operator";
     public static final String IP = "ip";

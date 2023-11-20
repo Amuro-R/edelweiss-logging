@@ -7,9 +7,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author jingyun
- * @date 2022-08-19
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class CheckUtils {
 
     private static final Pattern PHONE_PATTERN;

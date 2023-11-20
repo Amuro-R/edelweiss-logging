@@ -9,6 +9,10 @@ import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
 import java.util.LinkedHashSet;
 import java.util.concurrent.*;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Data
 @NoArgsConstructor
 public class LogProperties {

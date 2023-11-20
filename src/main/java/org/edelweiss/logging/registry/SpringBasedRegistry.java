@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * @author fzw
+ * @author Amuro-R
  * @date 2023/11/20
  **/
 public class SpringBasedRegistry<T> extends ClassBasedRegistry<T> implements ApplicationContextAware {

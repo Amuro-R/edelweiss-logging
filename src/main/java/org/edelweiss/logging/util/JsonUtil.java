@@ -13,9 +13,9 @@ import lombok.SneakyThrows;
 import java.util.TimeZone;
 
 /**
- * @author jingyun
- * @date 2022-03-01
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class JsonUtil {
 
     public static final ObjectMapper OBJECT_MAPPER;

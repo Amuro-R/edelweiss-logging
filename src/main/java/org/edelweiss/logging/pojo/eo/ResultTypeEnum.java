@@ -3,6 +3,10 @@ package org.edelweiss.logging.pojo.eo;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public enum ResultTypeEnum {
     SUCCESS("success", "成功"),
     FAIL("fail", "失败"),

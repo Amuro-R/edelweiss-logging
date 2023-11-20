@@ -18,11 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * 2048位 RSA 加密
- *
- * @author jingyun
- * @date 2022-03-01
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class RsaUtil {
 
     private final RsaContext rsaContext;

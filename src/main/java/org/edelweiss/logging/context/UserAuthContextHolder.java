@@ -1,9 +1,9 @@
 package org.edelweiss.logging.context;
 
 /**
- * @author jingyun
- * @date 2022-08-29
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class UserAuthContextHolder {
 
     // private static final ThreadLocal<UserAuthContext> USER_AUTH_CONTEXT;

@@ -9,6 +9,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {
 

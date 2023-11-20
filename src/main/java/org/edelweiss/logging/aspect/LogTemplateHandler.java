@@ -13,6 +13,10 @@ import org.springframework.context.expression.AnnotatedElementKey;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class LogTemplateHandler {
 
     private final LogParseFunctionRegistry logParseFunctionRegistry;

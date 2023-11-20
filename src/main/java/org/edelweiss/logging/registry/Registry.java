@@ -1,7 +1,7 @@
 package org.edelweiss.logging.registry;
 
 /**
- * @author fzw
+ * @author Amuro-R
  * @date 2023/11/20
  **/
 public interface Registry<K, V> {

@@ -1,5 +1,9 @@
 package org.edelweiss.logging.aspect.part;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public enum PartType {
 
     PLAIN_STRING(0, "空字符串块", "", "", "", "", ""),

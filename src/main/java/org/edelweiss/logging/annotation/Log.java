@@ -8,6 +8,8 @@ import org.edelweiss.logging.el.ILogParseFunction;
 import java.lang.annotation.*;
 
 /**
+ * @author Amuro-R
+ * @date 2023/11/20
  * 模板变量说明
  * {#xxx#} 方法执行前的SpEl变量
  * {@xxx@} 方法执行前的函数变量，需创建{@link ILogParseFunction}类型的spring bean

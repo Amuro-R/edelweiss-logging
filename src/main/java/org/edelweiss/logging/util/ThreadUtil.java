@@ -3,9 +3,9 @@ package org.edelweiss.logging.util;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author jingyun
- * @date 2022-09-02
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Slf4j
 public class ThreadUtil {
 

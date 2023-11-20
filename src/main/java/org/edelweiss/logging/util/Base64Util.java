@@ -4,9 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
- * @author jingyun
- * @date 2022-03-01
- */
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 public class Base64Util {
 
     private static final Base64.Decoder DECODER;

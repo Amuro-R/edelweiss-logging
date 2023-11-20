@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import static org.edelweiss.logging.properties.LogProperties.*;
 
 /**
- * @author fzw
+ * @author Amuro-R
  * @date 2023/11/20
  **/
 @Configuration

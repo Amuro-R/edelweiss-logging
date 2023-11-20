@@ -1,8 +1,14 @@
 package org.edelweiss.logging.context;
 
 
+import lombok.Getter;
 import org.edelweiss.logging.aspect.LogTemplateHandler;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
+@Getter
 public class TemplateHandlerContext {
 
     private final LogTemplateHandler successHandler;
@@ -15,11 +21,4 @@ public class TemplateHandlerContext {
         this.failHandler = failHandler;
     }
 
-    public LogTemplateHandler getSuccessHandler() {
-        return successHandler;
-    }
-
-    public LogTemplateHandler getFailHandler() {
-        return failHandler;
-    }
 }

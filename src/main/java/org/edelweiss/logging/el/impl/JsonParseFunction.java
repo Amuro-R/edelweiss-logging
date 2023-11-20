@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.edelweiss.logging.el.ILogParseFunction;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author Amuro-R
+ * @date 2023/11/20
+ **/
 @Slf4j
 public class JsonParseFunction implements ILogParseFunction {
 
