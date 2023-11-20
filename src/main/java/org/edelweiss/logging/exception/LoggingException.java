@@ -1,16 +1,9 @@
 package org.edelweiss.logging.exception;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-
 /**
  * @author fzw
  * @date 2023/11/20
  **/
-@Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 public class LoggingException extends RuntimeException {
 
     public LoggingException() {

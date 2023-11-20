@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.edelweiss.logging.ShokakuLoggingAutoConfiguration
+  org.edelweiss.logging.EdelweissLoggingAutoConfiguration
