@@ -85,7 +85,8 @@ public class LogProperties {
         private int maximumPoolSize = 64;
         private long keepAliveTime = 30;
         private TimeUnit timeUnit = TimeUnit.MINUTES;
-        private BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(10000);
-        private RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();
+        // private BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(10000);
+        private int workQueueSize = 10000;
+        private Class<? extends RejectedExecutionHandler> handler = ThreadPoolExecutor.CallerRunsPolicy.class;
     }
 }
