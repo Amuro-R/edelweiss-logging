@@ -1,6 +1,6 @@
 package org.edelweiss.logging.aspect;
 
-public class LogOperationConstant {
+public class LogConstant {
 
     public static final String OPERATOR = "operator";
     public static final String IP = "ip";

@@ -68,8 +68,7 @@ public class LogAspect {
         }
 
         try {
-            templateHandlerContext = this.logBefore(method, args, logOnMethod, logOnClass,
-                    methodExecuteResult, methodKey);
+            templateHandlerContext = this.logBefore(method, args, logOnMethod, logOnClass, methodExecuteResult, methodKey);
         } catch (Exception e) {
             methodExecuteResult.setLogBeforeFail(true);
             log.error("before log error", e);
@@ -96,7 +95,7 @@ public class LogAspect {
             // if (methodExecuteResult.getBusinessException() != e) {
             //     e.printStackTrace();
             // }
-            e.printStackTrace();
+            log.error("后执行日志异常", e);
         } finally {
             LogContext.removeLogAttributes();
         }
@@ -108,9 +107,8 @@ public class LogAspect {
         return result;
     }
 
-    private TemplateHandlerContext logBefore(Method method, Object[] args, Log logOnMethod,
-                                             Log logOnClass, MethodExecuteResult methodExecuteResult,
-                                             AnnotatedElementKey methodKey) {
+    private TemplateHandlerContext logBefore(Method method, Object[] args, Log logOnMethod, Log logOnClass,
+                                             MethodExecuteResult methodExecuteResult, AnnotatedElementKey methodKey) {
         LogContext.createCurrentStackFrame();
 
         String successTemplate = logOnMethod.successTemplate();
@@ -127,10 +125,10 @@ public class LogAspect {
                 expressionEvaluator, methodKey, beforeEvaluationContext, true);
 
         LogOperationTemplateHandler failHandler = null;
-        if (!failTemplate.trim().equals("")) {
+        if (!failTemplate.trim().isEmpty()) {
             methodExecuteResult.setHasFailTemplate(true);
-            failHandler = this.createHandlerAndParseTemplate(failTemplate, logParseFunctionFactory, expressionEvaluator, methodKey,
-                    beforeEvaluationContext, true);
+            failHandler = this.createHandlerAndParseTemplate(failTemplate, logParseFunctionFactory, expressionEvaluator,
+                    methodKey, beforeEvaluationContext, true);
         }
 
         return new TemplateHandlerContext(successHandler, failHandler);
@@ -182,23 +180,23 @@ public class LogAspect {
 
     private void handleAnnotationValue(Log logOnMethod, Log logOnClass) {
         if (!"".equals(logOnMethod.operator())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.OPERATOR, logOnMethod.operator());
+            LogContext.setLogAttributeCommon(LogConstant.OPERATOR, logOnMethod.operator());
         } else if (logOnClass != null && !"".equals(logOnClass.operator())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.OPERATOR, logOnClass.operator());
+            LogContext.setLogAttributeCommon(LogConstant.OPERATOR, logOnClass.operator());
         }
 
-        if (!"".equals(logOnMethod.ip())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.IP, logOnMethod.ip());
-        } else if (logOnClass != null && !"".equals(logOnClass.ip())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.IP, logOnClass.ip());
-        }
+        // if (!"".equals(logOnMethod.ip())) {
+        //     LogContext.setLogAttributeCommon(LogConstant.IP, logOnMethod.ip());
+        // } else if (logOnClass != null && !"".equals(logOnClass.ip())) {
+        //     LogContext.setLogAttributeCommon(LogConstant.IP, logOnClass.ip());
+        // }
 //        操作类型非共有
-        if (!OperationTypeEnum.NONE.equals(logOnMethod.bizType())) {
-            LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, logOnMethod.bizType());
-        } else if (logOnClass != null && !OperationTypeEnum.NONE.equals(logOnClass.bizType())) {
-            LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, logOnClass.bizType());
+        if (!OperationTypeEnum.NONE.code.equals(logOnMethod.bizType())) {
+            LogContext.setLogAttribute(LogConstant.OPERATION_TYPE, logOnMethod.bizType());
+        } else if (logOnClass != null && !OperationTypeEnum.NONE.code.equals(logOnClass.bizType())) {
+            LogContext.setLogAttribute(LogConstant.OPERATION_TYPE, logOnClass.bizType());
         } else {
-            LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, OperationTypeEnum.UNKNOWN);
+            LogContext.setLogAttribute(LogConstant.OPERATION_TYPE, OperationTypeEnum.UNKNOWN);
         }
     }
 
@@ -214,10 +212,10 @@ public class LogAspect {
 
     @SuppressWarnings("ConstantConditions")
     private LogPO getLogOperationPO(LogEvaluationContext afterEvaluationContext, ResultTypeEnum resultType, String content) {
-        OperationTypeEnum operationTypeEnum = (OperationTypeEnum) afterEvaluationContext.lookupVariable(LogOperationConstant.OPERATION_TYPE);
-        String operator = String.valueOf(afterEvaluationContext.lookupVariable(LogOperationConstant.OPERATOR));
-        String ip = String.valueOf(afterEvaluationContext.lookupVariable(LogOperationConstant.IP));
-        String phone = String.valueOf(afterEvaluationContext.lookupVariable(LogOperationConstant.PHONE));
+        OperationTypeEnum operationTypeEnum = (OperationTypeEnum) afterEvaluationContext.lookupVariable(LogConstant.OPERATION_TYPE);
+        String operator = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.OPERATOR));
+        String ip = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.IP));
+        String phone = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.PHONE));
         return new LogPO(operator, phone, operationTypeEnum, resultType, content);
     }
 

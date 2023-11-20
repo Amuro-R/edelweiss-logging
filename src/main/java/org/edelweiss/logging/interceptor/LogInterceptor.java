@@ -1,6 +1,6 @@
 package org.edelweiss.logging.interceptor;
 
-import org.edelweiss.logging.aspect.LogOperationConstant;
+import org.edelweiss.logging.aspect.LogConstant;
 import org.edelweiss.logging.context.LogContext;
 import org.edelweiss.logging.context.UserAuthContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,9 @@ public class LogInterceptor implements HandlerInterceptor {
             phone = UserAuthContextHolder.getPhone();
         }
         String remoteAddress = request.getRemoteAddr();
-        LogContext.setLogAttributeCommon(LogOperationConstant.OPERATOR, operator);
-        LogContext.setLogAttributeCommon(LogOperationConstant.IP, remoteAddress);
-        LogContext.setLogAttributeCommon(LogOperationConstant.PHONE, phone);
+        LogContext.setLogAttributeCommon(LogConstant.OPERATOR, operator);
+        LogContext.setLogAttributeCommon(LogConstant.IP, remoteAddress);
+        LogContext.setLogAttributeCommon(LogConstant.PHONE, phone);
         return true;
     }
 

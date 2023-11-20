@@ -7,9 +7,9 @@ import org.edelweiss.logging.pojo.vo.Result;
 public class ControllerResultPostProcessor implements ResultPostProcessor {
     @Override
     public Object process(Object result, MethodExecuteResult methodExecuteResult) {
-        if (result instanceof Result<?>) {
-            Result<?> res = (Result<?>) result;
-            methodExecuteResult.setBusinessFail(!res.isSuccess());
+        if (result instanceof Result) {
+            Result res = (Result) result;
+            methodExecuteResult.setBusinessFail(!res.success());
         }
         return null;
     }

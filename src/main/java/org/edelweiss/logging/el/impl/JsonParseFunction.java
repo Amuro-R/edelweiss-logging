@@ -1,6 +1,5 @@
 package org.edelweiss.logging.el.impl;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.edelweiss.logging.el.ILogParseFunction;
@@ -9,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JsonParseFunction implements ILogParseFunction {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public String functionName() {
@@ -22,7 +21,7 @@ public class JsonParseFunction implements ILogParseFunction {
             if (args[0] != null) {
                 Object obj = args[0];
                 try {
-                    return objectMapper.writeValueAsString(obj);
+                    return OBJECT_MAPPER.writeValueAsString(obj);
                 } catch (JsonProcessingException e) {
                     log.error("参数json序列化失败", e);
                     return null;
