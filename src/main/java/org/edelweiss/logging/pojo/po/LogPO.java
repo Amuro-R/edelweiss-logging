@@ -2,12 +2,10 @@ package org.edelweiss.logging.pojo.po;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.edelweiss.logging.pojo.eo.OperationTypeEnum;
 import org.edelweiss.logging.pojo.eo.ResultTypeEnum;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 /**
  * @author fzw
@@ -18,25 +16,24 @@ import java.util.List;
 public class LogPO {
     private String id;
     private String operator;
-    @Deprecated
-    private String phone;
+    private String ip;
     private String content;
     private String resType;
     private String bizType;
-    private List<String> tags;
+    private LinkedHashSet<String> tags;
     private Date createTime;
     private Date modifiedTime;
 
-    public LogPO(String operator, String phone, OperationTypeEnum operationTypeEnum, ResultTypeEnum resType, String content) {
+    public LogPO(String operator, String ip, String bizType, ResultTypeEnum resultType, String content, LinkedHashSet<String> tags) {
         this.operator = operator;
-        this.phone = phone;
+        this.ip = ip;
         this.content = content;
-        // this.params = params;
-        this.resType = resType.codeDesc;
-        this.bizType = operationTypeEnum.code;
-        Date now = new Date();
-        this.createTime = now;
-        this.modifiedTime = now;
-        this.tags = new ArrayList<>();
+        this.resType = resultType.code;
+        this.bizType = bizType;
+        Date date = new Date();
+        this.createTime = date;
+        this.modifiedTime = date;
+        this.tags = tags;
     }
+
 }

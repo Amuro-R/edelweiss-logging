@@ -1,8 +1,6 @@
 package org.edelweiss.logging.annotation;
 
 
-import org.edelweiss.logging.aspect.executor.ConsoleLogExecutor;
-import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.processor.NopResultPostProcessor;
 import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
 import org.edelweiss.logging.el.ILogParseFunction;
@@ -28,11 +26,11 @@ public @interface Log {
      */
     String operator() default "default";
 
-    /**
-     * 请求所属的IP地址
-     */
-    @Deprecated
-    String ip() default "none";
+    // /**
+    //  * 请求所属的IP地址
+    //  */
+    // @Deprecated
+    // String ip() default "none";
 
     /**
      * 业务类型
@@ -69,7 +67,7 @@ public @interface Log {
      * 执行该条日志的执行器
      * 方法级覆盖类级设置，类级覆盖全局配置
      */
-    Class<? extends LogExecutor>[] executors() default {ConsoleLogExecutor.class};
+    LogExecutorItem[] executors() default {};
 
     /**
      * 后置处理器

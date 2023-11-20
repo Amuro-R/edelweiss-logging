@@ -3,19 +3,24 @@ package org.edelweiss.logging.config;
 import org.edelweiss.logging.aspect.LogAspect;
 import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.executor.NopLogExecutor;
+import org.edelweiss.logging.aspect.processor.ControllerResultPostProcessor;
 import org.edelweiss.logging.aspect.processor.NopResultPostProcessor;
 import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
 import org.edelweiss.logging.el.ILogParseFunction;
 import org.edelweiss.logging.el.LogParseFunctionRegistry;
+import org.edelweiss.logging.el.impl.DateParseFunction;
+import org.edelweiss.logging.el.impl.JsonParseFunction;
+import org.edelweiss.logging.el.impl.MultipartParseFunction;
 import org.edelweiss.logging.properties.LogProperties;
 import org.edelweiss.logging.registry.LogExecutorRegistry;
 import org.edelweiss.logging.registry.LogResultPostProcessorRegistry;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+@Configuration
 public class LogDefaultConfig {
 
     @Bean("edelweiss.log.properties")
@@ -29,15 +34,15 @@ public class LogDefaultConfig {
         return new LogAspect();
     }
 
-    @Bean("edelweiss.log.executor.default")
-    @ConditionalOnMissingBean({LogExecutor.class})
-    public LogExecutor defaultLogExecutor() {
+    @Bean("edelweiss.log.executor.nop")
+    // @ConditionalOnMissingBean({LogExecutor.class})
+    public LogExecutor nopLogExecutor() {
         return new NopLogExecutor();
     }
 
-    @Bean("edelweiss.log.result.post.processor.default")
-    @ConditionalOnMissingBean({ResultPostProcessor.class})
-    public ResultPostProcessor defaultResultPostProcessor() {
+    @Bean("edelweiss.log.result.post.processor.nop")
+    // @ConditionalOnMissingBean({ResultPostProcessor.class})
+    public ResultPostProcessor nopResultPostProcessor() {
         return new NopResultPostProcessor();
     }
 
@@ -56,4 +61,24 @@ public class LogDefaultConfig {
         return new LogResultPostProcessorRegistry(processors);
     }
 
+
+    @Bean("edelweiss.log.result.post.processor.controller")
+    public ResultPostProcessor controllerResultPostProcessor() {
+        return new ControllerResultPostProcessor();
+    }
+
+    @Bean("edelweiss.log.function.json")
+    public JsonParseFunction jsonParseFunction() {
+        return new JsonParseFunction();
+    }
+
+    @Bean("edelweiss.log.function.date")
+    public DateParseFunction dateParseFunction() {
+        return new DateParseFunction();
+    }
+
+    @Bean("edelweiss.log.function.multipart")
+    public MultipartParseFunction multipartParseFunction() {
+        return new MultipartParseFunction();
+    }
 }

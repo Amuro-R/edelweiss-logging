@@ -26,7 +26,7 @@ public class LogInterceptor implements HandlerInterceptor {
         String remoteAddress = request.getRemoteAddr();
         LogContext.setLogAttributeCommon(LogConstant.OPERATOR, operator);
         LogContext.setLogAttributeCommon(LogConstant.IP, remoteAddress);
-        LogContext.setLogAttributeCommon(LogConstant.PHONE, phone);
+        // LogContext.setLogAttributeCommon(LogConstant.PHONE, phone);
         return true;
     }
 

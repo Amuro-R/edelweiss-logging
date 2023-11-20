@@ -1,25 +1,25 @@
 package org.edelweiss.logging.context;
 
 
-import org.edelweiss.logging.aspect.LogOperationTemplateHandler;
+import org.edelweiss.logging.aspect.LogTemplateHandler;
 
 public class TemplateHandlerContext {
 
-    private final LogOperationTemplateHandler successHandler;
+    private final LogTemplateHandler successHandler;
 
-    private final LogOperationTemplateHandler failHandler;
+    private final LogTemplateHandler failHandler;
 
-    public TemplateHandlerContext(LogOperationTemplateHandler successHandler,
-                                  LogOperationTemplateHandler failHandler) {
+    public TemplateHandlerContext(LogTemplateHandler successHandler,
+                                  LogTemplateHandler failHandler) {
         this.successHandler = successHandler;
         this.failHandler = failHandler;
     }
 
-    public LogOperationTemplateHandler getSuccessHandler() {
+    public LogTemplateHandler getSuccessHandler() {
         return successHandler;
     }
 
-    public LogOperationTemplateHandler getFailHandler() {
+    public LogTemplateHandler getFailHandler() {
         return failHandler;
     }
 }

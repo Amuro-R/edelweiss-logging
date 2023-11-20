@@ -6,18 +6,18 @@ import org.edelweiss.logging.aspect.part.PartType;
 import org.edelweiss.logging.aspect.part.StringPart;
 import org.edelweiss.logging.el.ILogParseFunction;
 import org.edelweiss.logging.el.LogEvaluationContext;
-import org.edelweiss.logging.el.LogOperationExpressionEvaluator;
+import org.edelweiss.logging.el.LogExpressionEvaluator;
 import org.edelweiss.logging.el.LogParseFunctionRegistry;
 import org.springframework.context.expression.AnnotatedElementKey;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogOperationTemplateHandler {
+public class LogTemplateHandler {
 
     private final LogParseFunctionRegistry logParseFunctionRegistry;
 
-    private final LogOperationExpressionEvaluator expressionEvaluator;
+    private final LogExpressionEvaluator expressionEvaluator;
 
     private final String template;
 
@@ -25,8 +25,8 @@ public class LogOperationTemplateHandler {
 
     private final PartInfo partInfo;
 
-    public LogOperationTemplateHandler(LogParseFunctionRegistry logParseFunctionRegistry, String template,
-                                       LogOperationExpressionEvaluator expressionEvaluator) {
+    public LogTemplateHandler(LogParseFunctionRegistry logParseFunctionRegistry, String template,
+                              LogExpressionEvaluator expressionEvaluator) {
         this.logParseFunctionRegistry = logParseFunctionRegistry;
         this.template = template;
         this.partList = new ArrayList<>();

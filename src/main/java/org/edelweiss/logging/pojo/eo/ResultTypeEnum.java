@@ -4,20 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ResultTypeEnum {
-    SUCCESS(0, "成功"),
-    FAIL(1, "失败"),
-    UNKNOWN(2, "未知"),
+    SUCCESS("success", "成功"),
+    FAIL("fail", "失败"),
+    UNKNOWN("unknown", "未知"),
     ;
-    public final Integer code;
+    public final String code;
 
     public final String codeDesc;
 
-    ResultTypeEnum(Integer code, String codeDesc) {
+    ResultTypeEnum(String code, String codeDesc) {
         this.code = code;
         this.codeDesc = codeDesc;
     }
 
-    private final static Map<Integer, ResultTypeEnum> CODE_MAP;
+    private final static Map<String, ResultTypeEnum> CODE_MAP;
 
     static {
         CODE_MAP = new HashMap<>();
@@ -26,7 +26,7 @@ public enum ResultTypeEnum {
         }
     }
 
-    public static ResultTypeEnum getValueByCode(Integer code) {
+    public static ResultTypeEnum getValueByCode(String code) {
         return CODE_MAP.get(code);
     }
 }

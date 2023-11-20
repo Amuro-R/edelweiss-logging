@@ -5,7 +5,7 @@ import org.edelweiss.logging.pojo.po.LogPO;
 
 public interface LogExecutor {
 
-    Object execute(LogPO logOperationPO);
+    Object execute(LogPO logPO);
 
 
 }

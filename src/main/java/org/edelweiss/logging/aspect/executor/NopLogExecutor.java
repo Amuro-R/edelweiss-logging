@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NopLogExecutor implements LogExecutor {
     @Override
-    public Object execute(LogPO logOperationPO) {
+    public Object execute(LogPO logPO) {
         return null;
     }
 }

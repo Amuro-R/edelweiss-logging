@@ -1,56 +1,64 @@
 package org.edelweiss.logging.aspect;
 
-import org.edelweiss.logging.annotation.Log;
-import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
-import org.edelweiss.logging.context.LogContext;
-import org.edelweiss.logging.context.TemplateHandlerContext;
-import org.edelweiss.logging.aspect.executor.LogExecutor;
-import org.edelweiss.logging.aspect.part.StringPart;
-import org.edelweiss.logging.el.LogEvaluationContext;
-import org.edelweiss.logging.el.LogOperationExpressionEvaluator;
-import org.edelweiss.logging.el.LogParseFunctionRegistry;
-import org.edelweiss.logging.properties.LogProperties;
-import org.edelweiss.logging.pojo.po.LogPO;
-import org.edelweiss.logging.pojo.eo.OperationTypeEnum;
-import org.edelweiss.logging.pojo.eo.ResultTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.edelweiss.logging.annotation.Log;
+import org.edelweiss.logging.aspect.executor.ConsoleLogExecutor;
+import org.edelweiss.logging.aspect.executor.LogExecutor;
+import org.edelweiss.logging.aspect.part.StringPart;
+import org.edelweiss.logging.aspect.processor.NopResultPostProcessor;
+import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
+import org.edelweiss.logging.context.LogContext;
+import org.edelweiss.logging.context.TemplateHandlerContext;
+import org.edelweiss.logging.el.LogEvaluationContext;
+import org.edelweiss.logging.el.LogExpressionEvaluator;
+import org.edelweiss.logging.el.LogParseFunctionRegistry;
+import org.edelweiss.logging.pojo.eo.ResultTypeEnum;
+import org.edelweiss.logging.pojo.po.LogPO;
+import org.edelweiss.logging.properties.LogProperties;
+import org.edelweiss.logging.registry.LogExecutorRegistry;
+import org.edelweiss.logging.registry.LogResultPostProcessorRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.expression.AnnotatedElementKey;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
+
+import static org.edelweiss.logging.properties.LogProperties.*;
 
 @Slf4j
 @Aspect
 public class LogAspect {
 
     private final StandardReflectionParameterNameDiscoverer nameDiscoverer = new StandardReflectionParameterNameDiscoverer();
-    private final LogOperationExpressionEvaluator expressionEvaluator = new LogOperationExpressionEvaluator();
+    private final LogExpressionEvaluator expressionEvaluator = new LogExpressionEvaluator();
 
     @Autowired
     private LogParseFunctionRegistry logParseFunctionRegistry;
-
     @Autowired
-    private LogExecutor logExecutor;
-
+    private LogExecutorRegistry logExecutorRegistry;
     @Autowired
-    private ResultPostProcessor resultPostProcessor;
-
+    private LogResultPostProcessorRegistry logResultPostProcessorRegistry;
     @Autowired
     private LogProperties logProperties;
+    @Autowired
+    @Qualifier("edelweiss.log.thread.pool.default")
+    private ThreadPoolExecutor threadPoolExecutor;
 
     @Pointcut("@annotation(org.edelweiss.logging.annotation.Log)")
-    public void logOperationCutPoint() {
+    public void logCutPoint() {
     }
 
-    @Around("org.edelweiss.logging.aspect.LogAspect.logOperationCutPoint()")
+    @Around("org.edelweiss.logging.aspect.LogAspect.logCutPoint()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
@@ -83,18 +91,12 @@ public class LogAspect {
         }
 
         try {
-            LogPO logOperation = this.logAfter(method, args, logOnMethod, logOnClass, methodExecuteResult,
+            LogPO logPO = this.logAfter(method, args, logOnMethod, logOnClass, methodExecuteResult,
                     methodKey, result, templateHandlerContext);
 
-            if (logExecutor != null) {
-                logExecutor.execute(logOperation);
-            } else {
-                throw new RuntimeException("没有合适的日志记录器");
-            }
+            this.doLogExecute(logOnMethod, logOnClass, logPO);
+
         } catch (Exception e) {
-            // if (methodExecuteResult.getBusinessException() != e) {
-            //     e.printStackTrace();
-            // }
             log.error("后执行日志异常", e);
         } finally {
             LogContext.removeLogAttributes();
@@ -105,6 +107,32 @@ public class LogAspect {
         }
 
         return result;
+    }
+
+    private void doLogExecute(Log logOnMethod, Log logOnClass, LogPO logPO) {
+        LinkedHashSet<LogExecutorItemProp> executors = new LinkedHashSet<>();
+        LogExecutorItemProp globalExecutor = Optional.ofNullable(logProperties.getExecutor()).map(LogExecutorProp::getGlobal).orElse(null);
+        if (!ObjectUtils.isEmpty(logOnMethod.executors())) {
+            executors.addAll(Arrays.stream(logOnMethod.executors()).map(LogExecutorItemProp::new).collect(Collectors.toList()));
+        } else if (!ObjectUtils.isEmpty(logOnClass.executors())) {
+            executors.addAll(Arrays.stream(logOnClass.executors()).map(LogExecutorItemProp::new).collect(Collectors.toList()));
+        } else if (globalExecutor != null) {
+            executors.add(globalExecutor);
+        } else {
+            executors.add(new LogExecutorItemProp(ConsoleLogExecutor.class));
+        }
+
+        for (LogExecutorItemProp executor : executors) {
+            Class<? extends LogExecutor> clazz = executor.getClazz();
+            LogExecutor logExecutor = logExecutorRegistry.get(clazz);
+            if (executor.isAsync() && threadPoolExecutor != null) {
+                threadPoolExecutor.execute(() -> {
+                    logExecutor.execute(logPO);
+                });
+            } else {
+                logExecutor.execute(logPO);
+            }
+        }
     }
 
     private TemplateHandlerContext logBefore(Method method, Object[] args, Log logOnMethod, Log logOnClass,
@@ -121,10 +149,10 @@ public class LogAspect {
 
         LogEvaluationContext beforeEvaluationContext = new LogEvaluationContext(null, method, args, nameDiscoverer);
 
-        LogOperationTemplateHandler successHandler = this.createHandlerAndParseTemplate(successTemplate, logParseFunctionRegistry,
+        LogTemplateHandler successHandler = this.createHandlerAndParseTemplate(successTemplate, logParseFunctionRegistry,
                 expressionEvaluator, methodKey, beforeEvaluationContext, true);
 
-        LogOperationTemplateHandler failHandler = null;
+        LogTemplateHandler failHandler = null;
         if (!failTemplate.trim().isEmpty()) {
             methodExecuteResult.setHasFailTemplate(true);
             failHandler = this.createHandlerAndParseTemplate(failTemplate, logParseFunctionRegistry, expressionEvaluator,
@@ -142,9 +170,7 @@ public class LogAspect {
             throw new RuntimeException("before日志异常，跳过后续日志解析");
         }
 
-        if (resultPostProcessor != null) {
-            resultPostProcessor.process(result, methodExecuteResult);
-        }
+        this.resultPostProcess(logOnMethod, logOnClass, result, methodExecuteResult);
 
         LogEvaluationContext afterEvaluationContext = new LogEvaluationContext(null, method, args, nameDiscoverer);
 
@@ -156,7 +182,28 @@ public class LogAspect {
 
         String content = this.getContentString(resultPartList);
 
-        return this.getLogOperationPO(afterEvaluationContext, resultType, content);
+        return this.createLogPO(afterEvaluationContext, resultType, content);
+    }
+
+    private void resultPostProcess(Log logOnMethod, Log logOnClass, Object result, MethodExecuteResult methodExecuteResult) {
+        Class<? extends ResultPostProcessor> globalProcessor = Optional.ofNullable(logProperties.getProcessor())
+                .map(LogResultPostProcessorProp::getGlobal)
+                .map(LogResultPostProcessorItemProp::getClazz)
+                .orElse(null);
+        Class<? extends ResultPostProcessor> classProcessor = logOnClass.processor();
+        Class<? extends ResultPostProcessor> methodProcessor = logOnMethod.processor();
+        Class<? extends ResultPostProcessor> process = null;
+        if (methodProcessor != NopResultPostProcessor.class) {
+            process = methodProcessor;
+        } else if (classProcessor != NopResultPostProcessor.class) {
+            process = classProcessor;
+        } else if (globalProcessor != NopResultPostProcessor.class) {
+            process = globalProcessor;
+        } else {
+            process = NopResultPostProcessor.class;
+        }
+        ResultPostProcessor postProcessor = logResultPostProcessorRegistry.get(process);
+        postProcessor.process(result, methodExecuteResult);
     }
 
     private String integrateTemplatePrefix(String template, Log logOnClass) {
@@ -167,11 +214,11 @@ public class LogAspect {
         return template;
     }
 
-    private LogOperationTemplateHandler createHandlerAndParseTemplate(String template, LogParseFunctionRegistry logParseFunctionRegistry,
-                                                                      LogOperationExpressionEvaluator expressionEvaluator,
-                                                                      AnnotatedElementKey methodKey, LogEvaluationContext evaluationContext,
-                                                                      boolean before) {
-        LogOperationTemplateHandler templateHandler = new LogOperationTemplateHandler(logParseFunctionRegistry, template, expressionEvaluator);
+    private LogTemplateHandler createHandlerAndParseTemplate(String template, LogParseFunctionRegistry logParseFunctionRegistry,
+                                                             LogExpressionEvaluator expressionEvaluator,
+                                                             AnnotatedElementKey methodKey, LogEvaluationContext evaluationContext,
+                                                             boolean before) {
+        LogTemplateHandler templateHandler = new LogTemplateHandler(logParseFunctionRegistry, template, expressionEvaluator);
         templateHandler.extractStringPart();
         templateHandler.methodValueInject(methodKey, evaluationContext, before);
         return templateHandler;
@@ -179,44 +226,54 @@ public class LogAspect {
 
 
     private void handleAnnotationValue(Log logOnMethod, Log logOnClass) {
-        if (!"".equals(logOnMethod.operator())) {
+        if (!"".equals(logOnMethod.operator()) && !"default".equals(logOnMethod.operator())) {
             LogContext.setLogAttributeCommon(LogConstant.OPERATOR, logOnMethod.operator());
-        } else if (logOnClass != null && !"".equals(logOnClass.operator())) {
+        } else if (logOnClass != null && !"".equals(logOnClass.operator()) && !"default".equals(logOnClass.operator())) {
             LogContext.setLogAttributeCommon(LogConstant.OPERATOR, logOnClass.operator());
+        } else {
+            LogContext.setLogAttributeCommon(LogConstant.OPERATOR, "default");
         }
 
-        // if (!"".equals(logOnMethod.ip())) {
-        //     LogContext.setLogAttributeCommon(LogConstant.IP, logOnMethod.ip());
-        // } else if (logOnClass != null && !"".equals(logOnClass.ip())) {
-        //     LogContext.setLogAttributeCommon(LogConstant.IP, logOnClass.ip());
-        // }
-//        操作类型非共有
-        if (!OperationTypeEnum.NONE.code.equals(logOnMethod.bizType())) {
-            LogContext.setLogAttribute(LogConstant.OPERATION_TYPE, logOnMethod.bizType());
-        } else if (logOnClass != null && !OperationTypeEnum.NONE.code.equals(logOnClass.bizType())) {
-            LogContext.setLogAttribute(LogConstant.OPERATION_TYPE, logOnClass.bizType());
+        if (!"".equals(logOnMethod.bizType()) && !"default".equals(logOnMethod.bizType())) {
+            LogContext.setLogAttribute(LogConstant.BIZ_TYPE, logOnMethod.bizType());
+        } else if (logOnClass != null && !"default".equals(logOnClass.bizType()) && !"".equals(logOnClass.bizType())) {
+            LogContext.setLogAttribute(LogConstant.BIZ_TYPE, logOnClass.bizType());
         } else {
-            LogContext.setLogAttribute(LogConstant.OPERATION_TYPE, OperationTypeEnum.UNKNOWN);
+            LogContext.setLogAttribute(LogConstant.BIZ_TYPE, "default");
         }
+
+        LinkedHashSet<String> globalTags = Optional.ofNullable(logProperties.getTag()).map(LogTagProp::getGlobal).orElse(new LinkedHashSet<>());
+        LinkedHashSet<String> classTags = Optional.ofNullable(logOnClass).map(Log::tags).map(Arrays::asList).map(LinkedHashSet::new).orElse(new LinkedHashSet<>());
+        LinkedHashSet<String> methodTags = Optional.of(logOnMethod).map(Log::tags).map(Arrays::asList).map(LinkedHashSet::new).orElse(new LinkedHashSet<>());
+
+        globalTags.addAll(classTags);
+        globalTags.addAll(methodTags);
+
+        LogContext.setLogAttribute(LogConstant.TAG, globalTags);
     }
 
     private String getResultName(Log logOnMethod, Log logOnClass) {
-        String resultName = logOnMethod.resultName();
-        if (!"result".equals(logOnMethod.resultName())) {
+        String globalResultName = Optional.ofNullable(logProperties.getResultName()).map(LogResultNameProp::getGlobal).orElse(null);
+        String resultName = null;
+        if (!"result".equals(logOnMethod.resultName()) && !"".equals(logOnMethod.resultName())) {
             resultName = logOnMethod.resultName();
-        } else if (logOnClass != null && !"result".equals(logOnClass.resultName())) {
+        } else if (logOnClass != null && !"result".equals(logOnClass.resultName()) && !"".equals(logOnClass.resultName())) {
             resultName = logOnClass.resultName();
+        } else if (!ObjectUtils.isEmpty(globalResultName)) {
+            resultName = globalResultName;
+        } else {
+            resultName = "result";
         }
         return resultName;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private LogPO getLogOperationPO(LogEvaluationContext afterEvaluationContext, ResultTypeEnum resultType, String content) {
-        OperationTypeEnum operationTypeEnum = (OperationTypeEnum) afterEvaluationContext.lookupVariable(LogConstant.OPERATION_TYPE);
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
+    private LogPO createLogPO(LogEvaluationContext afterEvaluationContext, ResultTypeEnum resultType, String content) {
+        String bizType = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.BIZ_TYPE));
         String operator = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.OPERATOR));
         String ip = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.IP));
-        String phone = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.PHONE));
-        return new LogPO(operator, phone, operationTypeEnum, resultType, content);
+        LinkedHashSet<String> tags = (LinkedHashSet<String>) afterEvaluationContext.lookupVariable(LogConstant.TAG);
+        return new LogPO(operator, ip, bizType, resultType, content, tags);
     }
 
     private String getContentString(List<StringPart> resultPartList) {

@@ -8,7 +8,7 @@ import org.springframework.expression.Expression;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class LogOperationExpressionEvaluator extends CachedExpressionEvaluator {
+public class LogExpressionEvaluator extends CachedExpressionEvaluator {
 
     private final ConcurrentMap<ExpressionKey, Expression> expressionCache = new ConcurrentHashMap<>();
 
