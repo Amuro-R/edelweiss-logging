@@ -1,15 +1,15 @@
 package org.edelweiss.logging.aspect;
 
-import org.edelweiss.logging.annotation.LogOperation;
+import org.edelweiss.logging.annotation.Log;
 import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
 import org.edelweiss.logging.context.LogContext;
 import org.edelweiss.logging.context.TemplateHandlerContext;
-import org.edelweiss.logging.aspect.executor.LogOperationExecutor;
+import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.part.StringPart;
 import org.edelweiss.logging.el.LogEvaluationContext;
 import org.edelweiss.logging.el.LogOperationExpressionEvaluator;
 import org.edelweiss.logging.el.LogParseFunctionFactory;
-import org.edelweiss.logging.properties.LogOperationProperties;
+import org.edelweiss.logging.properties.LogProperties;
 import org.edelweiss.logging.pojo.po.LogPO;
 import org.edelweiss.logging.pojo.eo.OperationTypeEnum;
 import org.edelweiss.logging.pojo.eo.ResultTypeEnum;
@@ -29,7 +29,7 @@ import java.util.List;
 
 @Slf4j
 @Aspect
-public class LogOperationAspect {
+public class LogAspect {
 
     private final StandardReflectionParameterNameDiscoverer nameDiscoverer = new StandardReflectionParameterNameDiscoverer();
     private final LogOperationExpressionEvaluator expressionEvaluator = new LogOperationExpressionEvaluator();
@@ -38,37 +38,37 @@ public class LogOperationAspect {
     private LogParseFunctionFactory logParseFunctionFactory;
 
     @Autowired
-    private LogOperationExecutor logOperationExecutor;
+    private LogExecutor logExecutor;
 
     @Autowired
     private ResultPostProcessor resultPostProcessor;
 
     @Autowired
-    private LogOperationProperties logOperationProperties;
+    private LogProperties logProperties;
 
-    @Pointcut("@annotation(com.uniubi.mbi.core.service.log.annotation.LogOperation)")
+    @Pointcut("@annotation(org.edelweiss.logging.annotation.Log)")
     public void logOperationCutPoint() {
     }
 
-    @Around("com.uniubi.mbi.core.service.log.aspect.LogOperationAspect.logOperationCutPoint()")
+    @Around("org.edelweiss.logging.aspect.LogAspect.logOperationCutPoint()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Class<?> clazz = method.getDeclaringClass();
         Object[] args = pjp.getArgs();
-        LogOperation logOperationOnMethod = method.getAnnotation(LogOperation.class);
-        LogOperation logOperationOnClass = clazz.getAnnotation(LogOperation.class);
+        Log logOnMethod = method.getAnnotation(Log.class);
+        Log logOnClass = clazz.getAnnotation(Log.class);
 
         MethodExecuteResult methodExecuteResult = new MethodExecuteResult();
         AnnotatedElementKey methodKey = new AnnotatedElementKey(method, clazz);
         TemplateHandlerContext templateHandlerContext = null;
 
-        if (!logOperationProperties.isEnable()) {
+        if (!logProperties.isEnable()) {
             return pjp.proceed(args);
         }
 
         try {
-            templateHandlerContext = this.logBefore(method, args, logOperationOnMethod, logOperationOnClass,
+            templateHandlerContext = this.logBefore(method, args, logOnMethod, logOnClass,
                     methodExecuteResult, methodKey);
         } catch (Exception e) {
             methodExecuteResult.setLogBeforeFail(true);
@@ -84,11 +84,11 @@ public class LogOperationAspect {
         }
 
         try {
-            LogPO logOperation = this.logAfter(method, args, logOperationOnMethod, logOperationOnClass, methodExecuteResult,
+            LogPO logOperation = this.logAfter(method, args, logOnMethod, logOnClass, methodExecuteResult,
                     methodKey, result, templateHandlerContext);
 
-            if (logOperationExecutor != null) {
-                logOperationExecutor.execute(logOperation);
+            if (logExecutor != null) {
+                logExecutor.execute(logOperation);
             } else {
                 throw new RuntimeException("没有合适的日志记录器");
             }
@@ -108,18 +108,18 @@ public class LogOperationAspect {
         return result;
     }
 
-    private TemplateHandlerContext logBefore(Method method, Object[] args, LogOperation logOperationOnMethod,
-                                             LogOperation logOperationOnClass, MethodExecuteResult methodExecuteResult,
+    private TemplateHandlerContext logBefore(Method method, Object[] args, Log logOnMethod,
+                                             Log logOnClass, MethodExecuteResult methodExecuteResult,
                                              AnnotatedElementKey methodKey) {
         LogContext.createCurrentStackFrame();
 
-        String successTemplate = logOperationOnMethod.successTemplate();
-        String failTemplate = logOperationOnMethod.failTemplate();
+        String successTemplate = logOnMethod.successTemplate();
+        String failTemplate = logOnMethod.failTemplate();
 
-        successTemplate = this.integrateTemplatePrefix(successTemplate, logOperationOnClass);
-        failTemplate = this.integrateTemplatePrefix(failTemplate, logOperationOnClass);
+        successTemplate = this.integrateTemplatePrefix(successTemplate, logOnClass);
+        failTemplate = this.integrateTemplatePrefix(failTemplate, logOnClass);
 
-        this.handleAnnotationValue(logOperationOnMethod, logOperationOnClass);
+        this.handleAnnotationValue(logOnMethod, logOnClass);
 
         LogEvaluationContext beforeEvaluationContext = new LogEvaluationContext(null, method, args, nameDiscoverer);
 
@@ -136,7 +136,7 @@ public class LogOperationAspect {
         return new TemplateHandlerContext(successHandler, failHandler);
     }
 
-    private LogPO logAfter(Method method, Object[] args, LogOperation logOperationOnMethod, LogOperation logOperationOnClass,
+    private LogPO logAfter(Method method, Object[] args, Log logOnMethod, Log logOnClass,
                            MethodExecuteResult methodExecuteResult, AnnotatedElementKey methodKey, Object result,
                            TemplateHandlerContext templateHandlerContext) throws Throwable {
 
@@ -150,7 +150,7 @@ public class LogOperationAspect {
 
         LogEvaluationContext afterEvaluationContext = new LogEvaluationContext(null, method, args, nameDiscoverer);
 
-        String resultName = this.getResultName(logOperationOnMethod, logOperationOnClass);
+        String resultName = this.getResultName(logOnMethod, logOnClass);
         afterEvaluationContext.setVariable(resultName, result);
 
         ResultTypeEnum resultType = this.getResultType(methodExecuteResult);
@@ -161,9 +161,9 @@ public class LogOperationAspect {
         return this.getLogOperationPO(afterEvaluationContext, resultType, content);
     }
 
-    private String integrateTemplatePrefix(String template, LogOperation logOperationOnClass) {
-        if (logOperationOnClass != null) {
-            String templatePrefix = logOperationOnClass.successTemplate();
+    private String integrateTemplatePrefix(String template, Log logOnClass) {
+        if (logOnClass != null) {
+            String templatePrefix = logOnClass.successTemplate();
             template = templatePrefix + template;
         }
         return template;
@@ -180,34 +180,34 @@ public class LogOperationAspect {
     }
 
 
-    private void handleAnnotationValue(LogOperation logOperationOnMethod, LogOperation logOperationOnClass) {
-        if (!"".equals(logOperationOnMethod.operator())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.OPERATOR, logOperationOnMethod.operator());
-        } else if (logOperationOnClass != null && !"".equals(logOperationOnClass.operator())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.OPERATOR, logOperationOnClass.operator());
+    private void handleAnnotationValue(Log logOnMethod, Log logOnClass) {
+        if (!"".equals(logOnMethod.operator())) {
+            LogContext.setLogAttributeCommon(LogOperationConstant.OPERATOR, logOnMethod.operator());
+        } else if (logOnClass != null && !"".equals(logOnClass.operator())) {
+            LogContext.setLogAttributeCommon(LogOperationConstant.OPERATOR, logOnClass.operator());
         }
 
-        if (!"".equals(logOperationOnMethod.ip())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.IP, logOperationOnMethod.ip());
-        } else if (logOperationOnClass != null && !"".equals(logOperationOnClass.ip())) {
-            LogContext.setLogAttributeCommon(LogOperationConstant.IP, logOperationOnClass.ip());
+        if (!"".equals(logOnMethod.ip())) {
+            LogContext.setLogAttributeCommon(LogOperationConstant.IP, logOnMethod.ip());
+        } else if (logOnClass != null && !"".equals(logOnClass.ip())) {
+            LogContext.setLogAttributeCommon(LogOperationConstant.IP, logOnClass.ip());
         }
 //        操作类型非共有
-        if (!OperationTypeEnum.NONE.equals(logOperationOnMethod.operationType())) {
-            LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, logOperationOnMethod.operationType());
-        } else if (logOperationOnClass != null && !OperationTypeEnum.NONE.equals(logOperationOnClass.operationType())) {
-            LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, logOperationOnClass.operationType());
+        if (!OperationTypeEnum.NONE.equals(logOnMethod.bizType())) {
+            LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, logOnMethod.bizType());
+        } else if (logOnClass != null && !OperationTypeEnum.NONE.equals(logOnClass.bizType())) {
+            LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, logOnClass.bizType());
         } else {
             LogContext.setLogAttribute(LogOperationConstant.OPERATION_TYPE, OperationTypeEnum.UNKNOWN);
         }
     }
 
-    private String getResultName(LogOperation logOperationOnMethod, LogOperation logOperationOnClass) {
-        String resultName = logOperationOnMethod.resultName();
-        if (!"result".equals(logOperationOnMethod.resultName())) {
-            resultName = logOperationOnMethod.resultName();
-        } else if (logOperationOnClass != null && !"result".equals(logOperationOnClass.resultName())) {
-            resultName = logOperationOnClass.resultName();
+    private String getResultName(Log logOnMethod, Log logOnClass) {
+        String resultName = logOnMethod.resultName();
+        if (!"result".equals(logOnMethod.resultName())) {
+            resultName = logOnMethod.resultName();
+        } else if (logOnClass != null && !"result".equals(logOnClass.resultName())) {
+            resultName = logOnClass.resultName();
         }
         return resultName;
     }

@@ -4,10 +4,10 @@ import org.edelweiss.logging.pojo.po.LogPO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ConsoleLogOperationExecutor implements LogOperationExecutor {
+public class NopLogExecutor implements LogExecutor {
     @Override
     public Object execute(LogPO logOperationPO) {
-        log.info("{}", logOperationPO);
         return null;
     }
 }
+

@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class LogOperationConfig {
+public class LogConfig {
 
     public static final ThreadPoolExecutor LOG_THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, 64, 30L, TimeUnit.MINUTES,
             new ArrayBlockingQueue<>(1000), new ThreadPoolExecutor.DiscardPolicy());

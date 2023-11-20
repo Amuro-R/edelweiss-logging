@@ -2,7 +2,6 @@ package org.edelweiss.logging.annotation;
 
 
 import org.edelweiss.logging.el.ILogParseFunction;
-import org.edelweiss.logging.pojo.eo.OperationTypeEnum;
 
 import java.lang.annotation.*;
 
@@ -19,22 +18,27 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
-public @interface LogOperation {
+public @interface Log {
 
     /**
-     * 操作人，默认为登录用户的姓名
+     * 操作人
      */
-    String operator() default "";
+    String operator() default "default";
 
     /**
      * 请求所属的IP地址
      */
-    String ip() default "";
+    String ip() default "none";
 
     /**
-     * 操作类型，必须设置，方法级别设置会覆盖类级别设置
+     * 业务类型，方法级别设置会覆盖类级别设置
      */
-    OperationTypeEnum operationType() default OperationTypeEnum.NONE;
+    String bizType() default "default";
+
+    /**
+     * 标签数组
+     */
+    String[] tags() default {};
 
     /**
      * 操作成功的模板，必须设置
@@ -47,7 +51,7 @@ public @interface LogOperation {
     String failTemplate() default "";
 
     /**
-     * 自定义返回值得变量名，供表达式中使用，方法级别设置会覆盖类级别设置
+     * 自定义返回值的变量名，供表达式中使用，方法级别设置会覆盖类级别设置
      */
     String resultName() default "result";
 

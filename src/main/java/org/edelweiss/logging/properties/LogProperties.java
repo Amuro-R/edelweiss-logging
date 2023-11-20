@@ -6,7 +6,7 @@ import org.edelweiss.logging.pojo.eo.LogTypeEnum;
 
 @Data
 @NoArgsConstructor
-public class LogOperationProperties {
+public class LogProperties {
     private boolean enable = false;
     // private String type = "noop";
     private LogTypeEnum type = LogTypeEnum.NOOP;
