@@ -2,8 +2,10 @@ package org.edelweiss.logging.interceptor;
 
 import org.edelweiss.logging.aspect.LogConstant;
 import org.edelweiss.logging.context.LogContext;
-import org.edelweiss.logging.context.UserAuthContextHolder;
+import org.edelweiss.logging.context.UserAuthService;
 import lombok.extern.slf4j.Slf4j;
+import org.edelweiss.logging.util.IpUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,21 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {
 
+    @Autowired
+    private UserAuthService userAuthService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.debug("Log Interceptor preHandle");
         LogContext.initLogContext();
-        String operator = null;
-        String phone = null;
-        if (UserAuthContextHolder.isLogin()) {
-            operator = UserAuthContextHolder.getUserName();
-            phone = UserAuthContextHolder.getPhone();
-        }
-        String remoteAddress = request.getRemoteAddr();
+        String operator = userAuthService.isLogin() ? userAuthService.getUserName() : "default";
+        String remoteAddress = IpUtil.getOriginIpFromHttpRequest(request);
         LogContext.setLogAttributeCommon(LogConstant.OPERATOR, operator);
         LogContext.setLogAttributeCommon(LogConstant.IP, remoteAddress);
-        // LogContext.setLogAttributeCommon(LogConstant.PHONE, phone);
         return true;
     }
 

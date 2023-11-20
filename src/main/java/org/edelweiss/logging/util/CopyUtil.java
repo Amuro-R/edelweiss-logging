@@ -29,12 +29,26 @@ public class CopyUtil {
     }
 
     public static <T extends Serializable> T deepCopy(T t) {
-        Kryo kryo = KRYO_POOL.obtain();
-        return kryo.copy(t);
+        Kryo kryo = null;
+        try {
+            kryo = KRYO_POOL.obtain();
+            return kryo.copy(t);
+        } finally {
+            if (kryo != null) {
+                KRYO_POOL.free(kryo);
+            }
+        }
     }
 
     public static <T extends Serializable> T shallowCopy(T t) {
-        Kryo kryo = KRYO_POOL.obtain();
-        return kryo.copyShallow(t);
+        Kryo kryo = null;
+        try {
+            kryo = KRYO_POOL.obtain();
+            return kryo.copyShallow(t);
+        } finally {
+            if (kryo != null) {
+                KRYO_POOL.free(kryo);
+            }
+        }
     }
 }
