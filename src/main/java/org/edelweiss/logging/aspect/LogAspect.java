@@ -194,14 +194,14 @@ public class LogAspect {
                 .map(LogResultPostProcessorProp::getGlobal)
                 .map(LogResultPostProcessorItemProp::getClazz)
                 .orElse(null);
-        Class<? extends ResultPostProcessor> classProcessor = logOnClass.processor();
-        Class<? extends ResultPostProcessor> methodProcessor = logOnMethod.processor();
+        Class<? extends ResultPostProcessor> classProcessor = Optional.ofNullable(logOnClass).map(Log::processor).orElse(null);
+        Class<? extends ResultPostProcessor> methodProcessor = Optional.ofNullable(logOnMethod).map(Log::processor).orElse(null);
         Class<? extends ResultPostProcessor> process = null;
-        if (methodProcessor != NopResultPostProcessor.class) {
+        if (methodProcessor != null && methodProcessor != NopResultPostProcessor.class) {
             process = methodProcessor;
-        } else if (classProcessor != NopResultPostProcessor.class) {
+        } else if (classProcessor != null && classProcessor != NopResultPostProcessor.class) {
             process = classProcessor;
-        } else if (globalProcessor != NopResultPostProcessor.class) {
+        } else if (globalProcessor != null && globalProcessor != NopResultPostProcessor.class) {
             process = globalProcessor;
         } else {
             process = NopResultPostProcessor.class;

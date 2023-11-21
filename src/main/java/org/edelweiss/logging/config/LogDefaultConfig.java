@@ -1,6 +1,7 @@
 package org.edelweiss.logging.config;
 
 import org.edelweiss.logging.aspect.LogAspect;
+import org.edelweiss.logging.aspect.executor.ConsoleLogExecutor;
 import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.executor.NopLogExecutor;
 import org.edelweiss.logging.aspect.processor.ControllerResultPostProcessor;
@@ -40,13 +41,19 @@ public class LogDefaultConfig {
 
     @Bean("edelweiss.log.executor.nop")
     // @ConditionalOnMissingBean({LogExecutor.class})
-    public LogExecutor nopLogExecutor() {
+    public NopLogExecutor nopLogExecutor() {
         return new NopLogExecutor();
+    }
+
+    @Bean("edelweiss.log.executor.console")
+    // @ConditionalOnMissingBean({LogExecutor.class})
+    public ConsoleLogExecutor consoleLogExecutor() {
+        return new ConsoleLogExecutor();
     }
 
     @Bean("edelweiss.log.result.post.processor.nop")
     // @ConditionalOnMissingBean({ResultPostProcessor.class})
-    public ResultPostProcessor nopResultPostProcessor() {
+    public NopResultPostProcessor nopResultPostProcessor() {
         return new NopResultPostProcessor();
     }
 
@@ -67,7 +74,7 @@ public class LogDefaultConfig {
 
 
     @Bean("edelweiss.log.result.post.processor.controller")
-    public ResultPostProcessor controllerResultPostProcessor() {
+    public ControllerResultPostProcessor controllerResultPostProcessor() {
         return new ControllerResultPostProcessor();
     }
 

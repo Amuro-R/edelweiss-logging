@@ -18,14 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {
 
-    @Autowired
+    @Autowired(required = false)
     private UserAuthService userAuthService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.debug("Log Interceptor preHandle");
         LogContext.initLogContext();
-        String operator = userAuthService.isLogin() ? userAuthService.getUserName() : "default";
+        String operator = (userAuthService != null && userAuthService.isLogin()) ? userAuthService.getUserName() : "default";
         String remoteAddress = IpUtil.getOriginIpFromHttpRequest(request);
         LogContext.setLogAttributeCommon(LogConstant.OPERATOR, operator);
         LogContext.setLogAttributeCommon(LogConstant.IP, remoteAddress);

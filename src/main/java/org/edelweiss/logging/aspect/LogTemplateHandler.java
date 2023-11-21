@@ -152,7 +152,6 @@ public class LogTemplateHandler {
                     PartInfo paramPartInfo = new PartInfo();
                     paramPartInfo.buildStatus(PartType.SPEL_STRING, partIndexInfo.getIndex(), partIndexInfo.isBefore());
                     String paramPart = this.getExtractedPartFromTemplate(functionArg, paramPartInfo);
-                    // 完整支持el表达式，不再加上前缀
                     functionPart.addFunctionArg(new StringPart("#" + paramPart, PartType.SPEL_STRING, partIndexInfo.isBefore()));
                 }
             }
