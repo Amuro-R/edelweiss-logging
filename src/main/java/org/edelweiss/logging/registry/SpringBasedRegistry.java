@@ -20,6 +20,7 @@ public class SpringBasedRegistry<T> extends ClassBasedRegistry<T> implements App
                 data = this.getContainer().get(key);
                 if (data == null) {
                     data = applicationContext.getBean(key);
+                    this.register(key, data);
                 }
             }
         }
