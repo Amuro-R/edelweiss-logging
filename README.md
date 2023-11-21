@@ -38,10 +38,10 @@ public interface UserAuthService {
 ```
 ### 1.2 模板解析
 日志模板支持字面量，spel表达式，自定义方法（需要实现相应接口）；同时对方法执行前后的参数上下文进行隔离（可能入参被修改，或者上下文加入了新的参数）：
-- {#xxx#} 方法执行前的SpEl变量
-- {@xxx@} 方法执行前的自定义方法
-- [#xxx#] 方法执行后的SpEl变量
-- [@xxx@] 方法执行后的函数变量
+- `{#xxx#}` 方法执行前的SpEl变量
+- `{@xxx@}` 方法执行前的自定义方法
+- `[#xxx#]` 方法执行后的SpEl变量
+- `[@xxx@]` 方法执行后的函数变量
 
 ```java
 @Log(successTemplate = "新建用户 方法执行前用户名:{#user.username#}" 生日:{@DateParseFunction({#user.birthday#})@} 方法执行后用户新建的id:[#user.id#] 方法执行结果:[#result.success#])
@@ -165,6 +165,10 @@ public class SpringApplication {
 }
 ```
 
+## 2. TODO
+1. 与Spring的集成分离，不再直接依赖Spring
+2. 支持非web环境
+3. 模板表达式多级嵌套
 
 
 
