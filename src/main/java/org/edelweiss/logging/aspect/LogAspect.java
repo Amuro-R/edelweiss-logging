@@ -129,12 +129,20 @@ public class LogAspect {
         for (LogExecutorItemProp executor : executors) {
             Class<? extends LogExecutor> clazz = executor.getClazz();
             LogExecutor logExecutor = logExecutorRegistry.get(clazz);
-            if (executor.isAsync() && threadPoolExecutor != null) {
-                threadPoolExecutor.execute(() -> {
+            if (logExecutor == null) {
+                log.warn("未找到对应的执行器, clazz:{}", clazz);
+                continue;
+            }
+            try {
+                if (executor.isAsync() && threadPoolExecutor != null) {
+                    threadPoolExecutor.execute(() -> {
+                        logExecutor.execute(logPO);
+                    });
+                } else {
                     logExecutor.execute(logPO);
-                });
-            } else {
-                logExecutor.execute(logPO);
+                }
+            } catch (Exception e) {
+                log.error("日志执行器执行失败, clazz:" + clazz, e);
             }
         }
     }
