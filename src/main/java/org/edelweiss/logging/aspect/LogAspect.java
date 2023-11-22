@@ -246,14 +246,26 @@ public class LogAspect {
             LogContext.setLogAttribute(LogConstant.BIZ_TYPE, "default");
         }
 
-        LinkedHashSet<String> globalTags = Optional.ofNullable(logProperties.getTag()).map(LogTagProp::getGlobal).orElse(new LinkedHashSet<>());
-        LinkedHashSet<String> classTags = Optional.ofNullable(logOnClass).map(Log::tags).map(Arrays::asList).map(LinkedHashSet::new).orElse(new LinkedHashSet<>());
-        LinkedHashSet<String> methodTags = Optional.of(logOnMethod).map(Log::tags).map(Arrays::asList).map(LinkedHashSet::new).orElse(new LinkedHashSet<>());
+        LinkedHashMap<String, String> globalTags = Optional.ofNullable(logProperties.getTag()).map(LogTagProp::getGlobal).orElse(new LinkedHashMap<>());
+        LinkedHashMap<String, String> classTags = this.extractTagsFromAnnotation(logOnClass);
+        LinkedHashMap<String, String> methodTags = this.extractTagsFromAnnotation(logOnMethod);
 
-        globalTags.addAll(classTags);
-        globalTags.addAll(methodTags);
+        globalTags.putAll(classTags);
+        globalTags.putAll(methodTags);
 
         LogContext.setLogAttribute(LogConstant.TAG, globalTags);
+    }
+
+    private LinkedHashMap<String, String> extractTagsFromAnnotation(Log logOnClass) {
+        LinkedHashMap<String, String> tags = Optional.ofNullable(logOnClass)
+                .map(Log::tags)
+                .map(Arrays::asList)
+                .map(item -> item.stream()
+                        .map(item2 -> item2.split("="))
+                        .filter(item2 -> item2.length == 2)
+                        .collect(Collectors.toMap(item2 -> item2[0], item2 -> item2[1], (k1, k2) -> k2, LinkedHashMap::new)))
+                .orElse(new LinkedHashMap<>());
+        return tags;
     }
 
     private String getResultName(Log logOnMethod, Log logOnClass) {
@@ -276,7 +288,7 @@ public class LogAspect {
         String bizType = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.BIZ_TYPE));
         String operator = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.OPERATOR));
         String ip = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.IP));
-        LinkedHashSet<String> tags = (LinkedHashSet<String>) afterEvaluationContext.lookupVariable(LogConstant.TAG);
+        LinkedHashMap<String, String> tags = (LinkedHashMap<String, String>) afterEvaluationContext.lookupVariable(LogConstant.TAG);
         return new LogPO(operator, ip, bizType, resultType, content, tags);
     }
 

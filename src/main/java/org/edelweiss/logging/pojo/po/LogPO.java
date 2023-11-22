@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.edelweiss.logging.pojo.eo.ResultTypeEnum;
 
 import java.util.Date;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 
 /**
  * @author Amuro-R
@@ -20,11 +20,11 @@ public class LogPO {
     private String content;
     private String resType;
     private String bizType;
-    private LinkedHashSet<String> tags;
+    private LinkedHashMap<String, String> tags;
     private Date createTime;
     private Date modifiedTime;
 
-    public LogPO(String operator, String ip, String bizType, ResultTypeEnum resultType, String content, LinkedHashSet<String> tags) {
+    public LogPO(String operator, String ip, String bizType, ResultTypeEnum resultType, String content, LinkedHashMap<String, String> tags) {
         this.operator = operator;
         this.ip = ip;
         this.content = content;

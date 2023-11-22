@@ -6,8 +6,10 @@ import org.edelweiss.logging.annotation.LogExecutorItem;
 import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
 
-import java.util.LinkedHashSet;
-import java.util.concurrent.*;
+import java.util.LinkedHashMap;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Amuro-R
@@ -72,7 +74,7 @@ public class LogProperties {
     @Data
     @NoArgsConstructor
     public static class LogTagProp {
-        private LinkedHashSet<String> global = new LinkedHashSet<>();
+        private LinkedHashMap<String, String> global = new LinkedHashMap<>();
     }
 
     @Data
