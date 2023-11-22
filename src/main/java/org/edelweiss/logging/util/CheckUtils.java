@@ -15,15 +15,11 @@ public class CheckUtils {
     private static final Pattern PHONE_PATTERN;
     private static final Pattern IPV4_PATTERN;
     private static final Pattern IPV4_EXTRACT_PATTERN;
-    private static final Pattern FACE_PATTERN;
 
     static {
         PHONE_PATTERN = Pattern.compile("[0-9]{11}");
         IPV4_PATTERN = Pattern.compile("^(([1-9]?\\d|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}([1-9]?\\d|1\\d{2}|2[0-4]\\d|25[0-5])$");
         IPV4_EXTRACT_PATTERN = Pattern.compile("((([1-9]?\\d|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}([1-9]?\\d|1\\d{2}|2[0-4]\\d|25[0-5]))");
-        FACE_PATTERN = Pattern.compile("[\\u4e00-\\u9fa50-9a-zA-Z]+_[0-9]{11}");
-        ;
-        ;
     }
 
     public static void emptyCheck(Object obj, String msg) {
@@ -44,13 +40,6 @@ public class CheckUtils {
         Matcher matcher = IPV4_PATTERN.matcher(str);
         if (!matcher.matches()) {
             throw new LoggingException("ipv4格式错误");
-        }
-    }
-
-    public static void faceFileCheck(String fileName) {
-        Matcher matcher = FACE_PATTERN.matcher(fileName);
-        if (!matcher.matches()) {
-            throw new LoggingException("文件名格式错误，姓名_手机号，姓名支持中英文数字，手机号仅限11位数字");
         }
     }
 

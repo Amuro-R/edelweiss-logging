@@ -95,8 +95,7 @@ public class LogAspect {
         }
 
         try {
-            LogPO logPO = this.logAfter(method, args, logOnMethod, logOnClass, methodExecuteResult,
-                    methodKey, result, templateHandlerContext);
+            LogPO logPO = this.logAfter(method, args, logOnMethod, logOnClass, methodExecuteResult, methodKey, result, templateHandlerContext);
 
             this.doLogExecute(logOnMethod, logOnClass, logPO);
 
