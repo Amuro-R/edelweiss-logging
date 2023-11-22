@@ -14,10 +14,14 @@ public void addUser(){}
 ```
 #### 1.1.2 业务类型和标签
 可以对日志标记业务类型（单个）和标签（多个）
+
+标签使用=分隔key和value
+
 > [!NOTE]
 > 如何处理业务类型和标签由用户在日志执行器中自行决定
+> 标签只允许有一个=号，多个=号的标签会被忽略
 ```java
-@Log(bizType = "user-service", tags = {"create", "user"}, successTemplate = "新建用户")
+@Log(bizType = "user-service", tags = {"opt=create", "target=user"}, successTemplate = "新建用户")
 public void addUser(){}
 ```
 > [!NOTE]
@@ -124,8 +128,8 @@ edelweiss:
         global: user-service
       tag:
         global:
-          - test
-          - user
+          tag1: val1
+          tag2: val2
       result-name:
         global: result
       executor:
