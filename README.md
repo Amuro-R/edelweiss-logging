@@ -19,6 +19,7 @@ public void addUser(){}
 
 > [!NOTE]
 > 如何处理业务类型和标签由用户在日志执行器中自行决定
+> 
 > 标签只允许有一个=号，多个=号的标签会被忽略
 ```java
 @Log(bizType = "user-service", tags = {"opt=create", "target=user"}, successTemplate = "新建用户")
@@ -26,6 +27,7 @@ public void addUser(){}
 ```
 > [!NOTE]
 > 全局配置，类注解，方法注解的tag最终会取并集
+> 
 > 业务类型方法注解会覆盖类注解，覆盖全局配置
 #### 1.1.3 日志主体
 通常是登录用户的用户名等信息，可以手动在注解中指定，也可以配合内置的spring拦截器，提供对应接口实现类来全局获取
