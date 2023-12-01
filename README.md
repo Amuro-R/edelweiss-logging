@@ -38,8 +38,11 @@ public void addUser(){}
 用户信息获取接口，实现并注册为spring bean，会被内置的拦截器自动调用
 ```java
 public interface UserAuthService {
+    //是否登录
     boolean isLogin();
+    //租户信息，默认作为group
     String getTenant();
+    //用户信息，默认作为subject
     String getUser();
 }
 ```
