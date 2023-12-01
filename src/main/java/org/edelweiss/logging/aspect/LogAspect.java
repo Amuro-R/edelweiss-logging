@@ -237,12 +237,20 @@ public class LogAspect {
 
 
     private void handleAnnotationValue(Log logOnMethod, Log logOnClass) {
-        if (!"".equals(logOnMethod.operator()) && !"default".equals(logOnMethod.operator())) {
-            LogContext.setLogAttributeCommon(LogConstant.OPERATOR, logOnMethod.operator());
-        } else if (logOnClass != null && !"".equals(logOnClass.operator()) && !"default".equals(logOnClass.operator())) {
-            LogContext.setLogAttributeCommon(LogConstant.OPERATOR, logOnClass.operator());
+        if (!"".equals(logOnMethod.group()) && !"default".equals(logOnMethod.group())) {
+            LogContext.setLogAttributeCommon(LogConstant.GROUP, logOnMethod.group());
+        } else if (logOnClass != null && !"".equals(logOnClass.group()) && !"default".equals(logOnClass.group())) {
+            LogContext.setLogAttributeCommon(LogConstant.GROUP, logOnClass.group());
         } else {
-            LogContext.setLogAttributeCommon(LogConstant.OPERATOR, "default");
+            LogContext.setLogAttributeCommon(LogConstant.GROUP, "default");
+        }
+
+        if (!"".equals(logOnMethod.subject()) && !"default".equals(logOnMethod.subject())) {
+            LogContext.setLogAttributeCommon(LogConstant.SUBJECT, logOnMethod.subject());
+        } else if (logOnClass != null && !"".equals(logOnClass.subject()) && !"default".equals(logOnClass.subject())) {
+            LogContext.setLogAttributeCommon(LogConstant.SUBJECT, logOnClass.subject());
+        } else {
+            LogContext.setLogAttributeCommon(LogConstant.SUBJECT, "default");
         }
 
         if (!"".equals(logOnMethod.bizType()) && !"default".equals(logOnMethod.bizType())) {
@@ -293,10 +301,11 @@ public class LogAspect {
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     private LogPO createLogPO(LogEvaluationContext afterEvaluationContext, ResultTypeEnum resultType, String content) {
         String bizType = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.BIZ_TYPE));
-        String operator = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.OPERATOR));
+        String subject = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.SUBJECT));
+        String group = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.GROUP));
         String ip = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.IP));
         LinkedHashMap<String, String> tags = (LinkedHashMap<String, String>) afterEvaluationContext.lookupVariable(LogConstant.TAG);
-        return new LogPO(operator, ip, bizType, resultType, content, tags);
+        return new LogPO(group, subject, ip, bizType, resultType, content, tags);
     }
 
     private String getContentString(List<StringPart> resultPartList) {

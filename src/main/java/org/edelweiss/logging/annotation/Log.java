@@ -22,11 +22,13 @@ import java.lang.annotation.*;
 @Documented
 public @interface Log {
 
+    String group() default "default";
+
     /**
-     * 操作人
+     * 主体
      * 方法级覆盖类级设置
      */
-    String operator() default "default";
+    String subject() default "default";
 
     // /**
     //  * 请求所属的IP地址

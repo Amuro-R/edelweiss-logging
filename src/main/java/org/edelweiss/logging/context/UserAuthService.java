@@ -6,8 +6,20 @@ package org.edelweiss.logging.context;
  **/
 public interface UserAuthService {
 
+    /**
+     * @return 是否登录
+     */
     boolean isLogin();
 
-    String getUserName();
+    /**
+     * @return 租户信息
+     */
+    String getTenant();
+
+    /**
+     * @return 用户信息
+     */
+    String getUser();
+
 
 }

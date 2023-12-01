@@ -25,9 +25,11 @@ public class LogInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.debug("Log Interceptor preHandle");
         LogContext.initLogContext();
-        String operator = (userAuthService != null && userAuthService.isLogin()) ? userAuthService.getUserName() : "default";
+        String tenant = (userAuthService != null && userAuthService.isLogin()) ? userAuthService.getTenant() : "default";
+        String user = (userAuthService != null && userAuthService.isLogin()) ? userAuthService.getUser() : "default";
         String remoteAddress = IpUtil.getOriginIpFromHttpRequest(request);
-        LogContext.setLogAttributeCommon(LogConstant.OPERATOR, operator);
+        LogContext.setLogAttributeCommon(LogConstant.GROUP, tenant);
+        LogContext.setLogAttributeCommon(LogConstant.SUBJECT, user);
         LogContext.setLogAttributeCommon(LogConstant.IP, remoteAddress);
         return true;
     }

@@ -15,7 +15,8 @@ import java.util.LinkedHashMap;
 @NoArgsConstructor
 public class LogPO {
     private String id;
-    private String operator;
+    private String group;
+    private String subject;
     private String ip;
     private String content;
     private String resType;
@@ -24,8 +25,9 @@ public class LogPO {
     private Date createTime;
     private Date modifiedTime;
 
-    public LogPO(String operator, String ip, String bizType, ResultTypeEnum resultType, String content, LinkedHashMap<String, String> tags) {
-        this.operator = operator;
+    public LogPO(String group, String subject, String ip, String bizType, ResultTypeEnum resultType, String content, LinkedHashMap<String, String> tags) {
+        this.group = group;
+        this.subject = subject;
         this.ip = ip;
         this.content = content;
         this.resType = resultType.code;
