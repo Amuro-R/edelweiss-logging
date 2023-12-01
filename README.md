@@ -165,15 +165,7 @@ edelweiss-logging为每个调用链维护了一个栈，栈底有一个默认Log
 
 ### 1.7 其他
 #### 1.7.1 快速引入
-通过注解快速开启
-```java
-@EnableELog
-public class SpringApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(SpringApplication.class, args);
-    }
-}
-```
+基于springboot自动配置
 
 ## 2. TODO
 1. 与Spring的集成分离，不再直接依赖Spring
