@@ -1,7 +1,7 @@
 # edelweiss-logging
 ## 1. 特性
 ### 1.1 基于AOP注解
-在方法上或类上加日志注解，无侵入性
+在方法上或类上加日志注解使用
 ```java
 @ELog(successTemplate = "新建用户")
 public void addUser(){}
