@@ -3,13 +3,13 @@
 ### 1.1 基于AOP注解
 在方法上或类上加日志注解，无侵入性
 ```java
-@Log(successTemplate = "新建用户")
+@ELog(successTemplate = "新建用户")
 public void addUser(){}
 ```
 #### 1.1.1 失败日志
 如果方法正常执行，则使用successTemplate模板，同时可以指定failTemplate，默认当方法抛出异常，且failTemplate不为空，会使用失败日志
 ```java
-@Log(successTemplate = "新建用户", failTemplate = "新建用户失败")
+@ELog(successTemplate = "新建用户", failTemplate = "新建用户失败")
 public void addUser(){}
 ```
 #### 1.1.2 业务类型和标签
@@ -22,24 +22,25 @@ public void addUser(){}
 > 
 > 标签只允许有一个=号，多个=号的标签会被忽略
 ```java
-@Log(bizType = "user-service", tags = {"opt=create", "target=user"}, successTemplate = "新建用户")
+@ELog(bizType = "user-service", tags = {"opt=create", "target=user"}, successTemplate = "新建用户")
 public void addUser(){}
 ```
 > [!NOTE]
 > 全局配置，类注解，方法注解的tag最终会取并集
 > 
 > 业务类型方法注解会覆盖类注解，覆盖全局配置
-#### 1.1.3 日志主体
+#### 1.1.3 日志主体和租户
 通常是登录用户的用户名等信息，可以手动在注解中指定，也可以配合内置的spring拦截器，提供对应接口实现类来全局获取
 ```java
-@Log(operator = "default-user", successTemplate = "新建用户", failTemplate = "新建用户失败")
+@ELog(group = "default-group", subject = "default-user", successTemplate = "新建用户", failTemplate = "新建用户失败")
 public void addUser(){}
 ```
 用户信息获取接口，实现并注册为spring bean，会被内置的拦截器自动调用
 ```java
 public interface UserAuthService {
     boolean isLogin();
-    String getUserName();
+    String getTenant();
+    String getUser();
 }
 ```
 ### 1.2 模板解析
@@ -50,7 +51,7 @@ public interface UserAuthService {
 - `[@xxx@]` 方法执行后的函数变量
 
 ```java
-@Log(successTemplate = "新建用户 方法执行前用户名:{#user.username#}" 生日:{@DateParseFunction({#user.birthday#})@} 方法执行后用户新建的id:[#user.id#] 方法执行结果:[#result.success#])
+@ELog(successTemplate = "新建用户 方法执行前用户名:{#user.username#}" 生日:{@DateParseFunction({#user.birthday#})@} 方法执行后用户新建的id:[#user.id#] 方法执行结果:[#result.success#])
 public Result addUser(User user) {}
 ```
 ```java
@@ -86,7 +87,7 @@ public class DateParseFunction implements ILogParseFunction {
 
 可以自定义结果处理器，实现方法执行成功与否的判断（需要实现指定接口，并注册为spring bean）
 ```java
-@Log(successTemplate = "新建用户", processor = ControllerResultPostProcessor.class)
+@ELog(successTemplate = "新建用户", processor = ControllerResultPostProcessor.class)
 public void addUser(){}
 ```
 ```java
@@ -105,9 +106,9 @@ public interface ResultPostProcessor {
 ### 1.4 自定义日志执行器
 edelweiss-logging本身不负责日志的具体实现，只负责模板解析和业务代码的结合，用户可以自己选择具体的日志实现，将其包装为执行器（实现指定接口）即可
 ```java
-@Log(successTemplate = "新建用户", executors = {
-        @LogExecutorItem(clazz = ConsoleLogExecutor.class, async = true),
-        @LogExecutorItem(clazz = DBLogExecutor.class, async = true)})
+@ELog(successTemplate = "新建用户", executors = {
+        @ELogExecutor(clazz = ConsoleLogExecutor.class, async = true),
+        @ELogExecutor(clazz = DBLogExecutor.class, async = true)})
 public void addUser(){}
 ```
 ```java
@@ -163,7 +164,7 @@ edelweiss-logging为每个调用链维护了一个栈，栈底有一个默认Log
 #### 1.7.1 快速引入
 通过注解快速开启
 ```java
-@EnableLog
+@EnableELog
 public class SpringApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringApplication.class, args);
