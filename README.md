@@ -168,6 +168,7 @@ edelweiss-logging为每个调用链维护了一个栈，栈底有一个默认Log
 基于springboot自动配置
 
 ## 2. TODO
+后续改进
 1. 与Spring的集成分离，不再直接依赖Spring
 2. 支持非web环境
 3. 模板表达式多级嵌套
