@@ -16,5 +16,5 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Import({LogDefaultConfig.class, LogWebConfig.class, LogThreadConfig.class})
 @Documented
-public @interface EnableLog {
+public @interface EnableELog {
 }

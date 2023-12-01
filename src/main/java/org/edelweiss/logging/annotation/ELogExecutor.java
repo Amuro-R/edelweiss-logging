@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE})
 @Documented
-public @interface LogExecutorItem {
+public @interface ELogExecutor {
     /**
      * 执行器类
      */

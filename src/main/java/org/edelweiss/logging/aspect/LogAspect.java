@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.edelweiss.logging.annotation.Log;
+import org.edelweiss.logging.annotation.ELog;
 import org.edelweiss.logging.aspect.executor.ConsoleLogExecutor;
 import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.part.StringPart;
@@ -58,7 +58,7 @@ public class LogAspect {
     @Qualifier("edelweiss.log.thread.pool.default")
     private ThreadPoolExecutor threadPoolExecutor;
 
-    @Pointcut("@annotation(org.edelweiss.logging.annotation.Log)")
+    @Pointcut("@annotation(org.edelweiss.logging.annotation.ELog)")
     public void logCutPoint() {
     }
 
@@ -68,8 +68,8 @@ public class LogAspect {
         Method method = signature.getMethod();
         Class<?> clazz = method.getDeclaringClass();
         Object[] args = pjp.getArgs();
-        Log logOnMethod = method.getAnnotation(Log.class);
-        Log logOnClass = clazz.getAnnotation(Log.class);
+        ELog logOnMethod = method.getAnnotation(ELog.class);
+        ELog logOnClass = clazz.getAnnotation(ELog.class);
 
         MethodExecuteResult methodExecuteResult = new MethodExecuteResult();
         AnnotatedElementKey methodKey = new AnnotatedElementKey(method, clazz);
@@ -112,7 +112,7 @@ public class LogAspect {
         return result;
     }
 
-    private void doLogExecute(Log logOnMethod, Log logOnClass, LogPO logPO) {
+    private void doLogExecute(ELog logOnMethod, ELog logOnClass, LogPO logPO) {
         LinkedHashSet<LogExecutorItemProp> executors = new LinkedHashSet<>();
         LogExecutorItemProp globalExecutor = Optional.ofNullable(logProperties.getExecutor()).map(LogExecutorProp::getGlobal).orElse(null);
         if (!ObjectUtils.isEmpty(logOnMethod.executors())) {
@@ -146,7 +146,7 @@ public class LogAspect {
         }
     }
 
-    private TemplateHandlerContext logBefore(Method method, Object[] args, Log logOnMethod, Log logOnClass,
+    private TemplateHandlerContext logBefore(Method method, Object[] args, ELog logOnMethod, ELog logOnClass,
                                              MethodExecuteResult methodExecuteResult, AnnotatedElementKey methodKey) {
         LogContext.createCurrentStackFrame();
 
@@ -173,7 +173,7 @@ public class LogAspect {
         return new TemplateHandlerContext(successHandler, failHandler);
     }
 
-    private LogPO logAfter(Method method, Object[] args, Log logOnMethod, Log logOnClass,
+    private LogPO logAfter(Method method, Object[] args, ELog logOnMethod, ELog logOnClass,
                            MethodExecuteResult methodExecuteResult, AnnotatedElementKey methodKey, Object result,
                            TemplateHandlerContext templateHandlerContext) throws Throwable {
 
@@ -196,13 +196,13 @@ public class LogAspect {
         return this.createLogPO(afterEvaluationContext, resultType, content);
     }
 
-    private void resultPostProcess(Log logOnMethod, Log logOnClass, Object result, MethodExecuteResult methodExecuteResult) {
+    private void resultPostProcess(ELog logOnMethod, ELog logOnClass, Object result, MethodExecuteResult methodExecuteResult) {
         Class<? extends ResultPostProcessor> globalProcessor = Optional.ofNullable(logProperties.getProcessor())
                 .map(LogResultPostProcessorProp::getGlobal)
                 .map(LogResultPostProcessorItemProp::getClazz)
                 .orElse(null);
-        Class<? extends ResultPostProcessor> classProcessor = Optional.ofNullable(logOnClass).map(Log::processor).orElse(null);
-        Class<? extends ResultPostProcessor> methodProcessor = Optional.ofNullable(logOnMethod).map(Log::processor).orElse(null);
+        Class<? extends ResultPostProcessor> classProcessor = Optional.ofNullable(logOnClass).map(ELog::processor).orElse(null);
+        Class<? extends ResultPostProcessor> methodProcessor = Optional.ofNullable(logOnMethod).map(ELog::processor).orElse(null);
         Class<? extends ResultPostProcessor> process = null;
         if (methodProcessor != null && methodProcessor != NopResultPostProcessor.class) {
             process = methodProcessor;
@@ -217,7 +217,7 @@ public class LogAspect {
         postProcessor.process(result, methodExecuteResult);
     }
 
-    private String integrateTemplatePrefix(String template, Log logOnClass) {
+    private String integrateTemplatePrefix(String template, ELog logOnClass) {
         if (logOnClass != null) {
             String templatePrefix = logOnClass.successTemplate();
             template = templatePrefix + template;
@@ -236,7 +236,7 @@ public class LogAspect {
     }
 
 
-    private void handleAnnotationValue(Log logOnMethod, Log logOnClass) {
+    private void handleAnnotationValue(ELog logOnMethod, ELog logOnClass) {
         if (!"".equals(logOnMethod.group()) && !"default".equals(logOnMethod.group())) {
             LogContext.setLogAttributeCommon(LogConstant.GROUP, logOnMethod.group());
         } else if (logOnClass != null && !"".equals(logOnClass.group()) && !"default".equals(logOnClass.group())) {
@@ -271,9 +271,9 @@ public class LogAspect {
         LogContext.setLogAttribute(LogConstant.TAG, globalTags);
     }
 
-    private LinkedHashMap<String, String> extractTagsFromAnnotation(Log logOnClass) {
+    private LinkedHashMap<String, String> extractTagsFromAnnotation(ELog logOnClass) {
         LinkedHashMap<String, String> tags = Optional.ofNullable(logOnClass)
-                .map(Log::tags)
+                .map(ELog::tags)
                 .map(Arrays::asList)
                 .map(item -> item.stream()
                         .map(item2 -> item2.split("="))
@@ -283,7 +283,7 @@ public class LogAspect {
         return tags;
     }
 
-    private String getResultName(Log logOnMethod, Log logOnClass) {
+    private String getResultName(ELog logOnMethod, ELog logOnClass) {
         String globalResultName = Optional.ofNullable(logProperties.getResultName()).map(LogResultNameProp::getGlobal).orElse(null);
         String resultName = null;
         if (!"result".equals(logOnMethod.resultName()) && !"".equals(logOnMethod.resultName())) {

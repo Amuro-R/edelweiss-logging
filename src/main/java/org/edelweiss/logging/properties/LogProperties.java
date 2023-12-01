@@ -2,7 +2,7 @@ package org.edelweiss.logging.properties;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.edelweiss.logging.annotation.LogExecutorItem;
+import org.edelweiss.logging.annotation.ELogExecutor;
 import org.edelweiss.logging.aspect.executor.LogExecutor;
 import org.edelweiss.logging.aspect.processor.ResultPostProcessor;
 
@@ -48,7 +48,7 @@ public class LogProperties {
             this.async = async;
         }
 
-        public LogExecutorItemProp(LogExecutorItem annotation) {
+        public LogExecutorItemProp(ELogExecutor annotation) {
             this(annotation.clazz(), annotation.async());
         }
     }

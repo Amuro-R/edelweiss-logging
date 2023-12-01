@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
-public @interface Log {
+public @interface ELog {
 
     String group() default "default";
 
@@ -71,7 +71,7 @@ public @interface Log {
      * 执行该条日志的执行器
      * 方法级覆盖类级设置，类级覆盖全局配置
      */
-    LogExecutorItem[] executors() default {};
+    ELogExecutor[] executors() default {};
 
     /**
      * 后置处理器
