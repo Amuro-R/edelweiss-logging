@@ -25,6 +25,7 @@ public class LogProperties {
     private LogTagProp tag;
     private LogResultNameProp resultName;
     private LogThreadPoolProp threadPool;
+    private LogInterceptorProp interceptor;
 
     @Data
     @NoArgsConstructor
@@ -94,5 +95,13 @@ public class LogProperties {
         // private BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(10000);
         private int workQueueSize = 10000;
         private Class<? extends RejectedExecutionHandler> handler = ThreadPoolExecutor.CallerRunsPolicy.class;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class LogInterceptorProp {
+        private String[] includePatterns = new String[]{"/**"};
+        private String[] excludePatterns = new String[]{};
+        private int order = 10000;
     }
 }

@@ -17,6 +17,7 @@ import org.edelweiss.logging.context.TemplateHandlerContext;
 import org.edelweiss.logging.el.LogEvaluationContext;
 import org.edelweiss.logging.el.LogExpressionEvaluator;
 import org.edelweiss.logging.el.LogParseFunctionRegistry;
+import org.edelweiss.logging.pojo.eo.LogLevelEnum;
 import org.edelweiss.logging.pojo.eo.ResultTypeEnum;
 import org.edelweiss.logging.pojo.po.LogPO;
 import org.edelweiss.logging.properties.LogProperties;
@@ -190,10 +191,9 @@ public class LogAspect {
 
         ResultTypeEnum resultType = this.getResultType(methodExecuteResult);
         List<StringPart> resultPartList = this.getStringPartList(methodExecuteResult, methodKey, templateHandlerContext, afterEvaluationContext);
-
+        LogLevelEnum logLevel = methodExecuteResult.getLogLevel();
         String content = this.getContentString(resultPartList);
-
-        return this.createLogPO(afterEvaluationContext, resultType, content);
+        return this.createLogPO(afterEvaluationContext, resultType, logLevel, content);
     }
 
     private void resultPostProcess(ELog logOnMethod, ELog logOnClass, Object result, MethodExecuteResult methodExecuteResult) {
@@ -299,13 +299,13 @@ public class LogAspect {
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
-    private LogPO createLogPO(LogEvaluationContext afterEvaluationContext, ResultTypeEnum resultType, String content) {
+    private LogPO createLogPO(LogEvaluationContext afterEvaluationContext, ResultTypeEnum resultType, LogLevelEnum logLevel, String content) {
         String bizType = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.BIZ_TYPE));
         String subject = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.SUBJECT));
         String group = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.GROUP));
         String ip = String.valueOf(afterEvaluationContext.lookupVariable(LogConstant.IP));
         LinkedHashMap<String, String> tags = (LinkedHashMap<String, String>) afterEvaluationContext.lookupVariable(LogConstant.TAG);
-        return new LogPO(group, subject, ip, bizType, resultType, content, tags);
+        return new LogPO(group, subject, ip, bizType, resultType, logLevel, content, tags);
     }
 
     private String getContentString(List<StringPart> resultPartList) {

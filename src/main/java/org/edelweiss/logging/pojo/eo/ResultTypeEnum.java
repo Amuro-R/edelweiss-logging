@@ -13,7 +13,6 @@ public enum ResultTypeEnum {
     UNKNOWN("unknown", "未知"),
     ;
     public final String code;
-
     public final String codeDesc;
 
     ResultTypeEnum(String code, String codeDesc) {

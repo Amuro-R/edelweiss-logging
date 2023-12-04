@@ -1,7 +1,6 @@
 package org.edelweiss.logging.el.impl;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.edelweiss.logging.el.ILogParseFunction;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,8 +13,6 @@ import java.util.stream.Collectors;
  * @date 2023/11/20
  **/
 public class MultipartParseFunction implements ILogParseFunction {
-
-    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public String functionName() {
